@@ -7,14 +7,52 @@
 //
 
 #import "wenzdAppDelegate.h"
-
+//#import "helloViewController.h"
+#import "ViewController.h"
+#import "NextviewController.h"
 @implementation wenzdAppDelegate
 
+@synthesize window = _window;
+@synthesize viewController = _viewController;
+
+- (void)dealloc
+{
+    [_window release];
+    [_viewController release];
+    [super dealloc];
+}
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
-    self.window.backgroundColor = [UIColor whiteColor];
+   
+    
+    // Override point for customization after application launch.
+    //增加标识，用于判断是否是第一次启动应用...没有值或者是值为no都反回FALSe
+    if (![[NSUserDefaults standardUserDefaults] boolForKey:@"everLaunched"]) {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"everLaunched"];
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"firstLaunch"];
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"helloLaunch"];
+    }
+    
+    //在这里创建视图控制器，第一次进来进入试图控制器ViewController，第二次进来到NextViewController中
+    //在视图控制器中加载视图
+    
+    //NSUserDefaults是个数据集，将一些key value存在本地的文件中，然后可以取
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"firstLaunch"]) {
+        ViewController *appStartController = [[ViewController alloc] init];
+       // appStartController.view.backgroundColor = [UIColor redColor];
+        self.window.rootViewController = appStartController;
+        [appStartController release];//生命周期，内存管理，生命周期是和应用程序绑定的
+    }else {
+        [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"helloLaunch"];
+        NextViewController *mainViewController = [[NextViewController alloc] init];
+        mainViewController.view.backgroundColor = [UIColor blueColor];
+        self.window.rootViewController=mainViewController;
+        [mainViewController release];
+    }
+    
+    //self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
 }
@@ -45,5 +83,6 @@
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
 
 @end
